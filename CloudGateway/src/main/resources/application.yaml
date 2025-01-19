@@ -1,0 +1,67 @@
+server:
+  port: 9090
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: API-GATEWAY
+  config:
+    import: configserver:http://localhost:8888
+  cloud:
+    gateway:
+      routes:
+        - id: ORDER-SERVICE
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: ORDER-SERVICE
+                fallbackUri: forward:/orderServiceFallback
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 1
+
+        - id: PRODUCT-SERVICE
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: PRODUCT-SERVICE
+                fallbackUri: forward:/productServiceFallback
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 1
+
+        - id: PAYMENT-SERVICE
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: PAYMENT-SERVICE
+                fallbackUri: forward:/paymentServiceFallback
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 1
+
+  security:
+    oauth2:
+      client:
+        registration:
+          okta:
+            client-id: EOMWkxmLVnq1A0NJwRG93lFywpWteGXb
+            client-secret: yvkTtYcB5XpEiJlVynmMnkqWECUrIYJ3PcoLYOVP1wqfRPb5AJgULYiAXASju2J0
+            scope: openid, profile, email, offline_access
+             
+        provider:
+          okta:
+            issuer-uri: https://dev-wgukswd3g0sjbf77.us.auth0.com/

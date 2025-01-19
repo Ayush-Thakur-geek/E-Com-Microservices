@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: ORDER-SERVICE
+
+  jmx:
+    enabled: true
+
+  datasource:
+    url: jdbc:mariadb://${DBHost:localhost}:3306/orderdb
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: Thakur@7
+
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.MariaDBDialect
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  cloud:
+    config:
+      import: configserver:http://localhost:8888
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-wgukswd3g0sjbf77.us.auth0.com/
+      client:
+        registration:
+          internal-client:
+            provider: okta
+            authorization-grant-type: client_credentials
+            scope:
+              - internal
+            client-id: EOMWkxmLVnq1A0NJwRG93lFywpWteGXb
+            client-secret: yvkTtYcB5XpEiJlVynmMnkqWECUrIYJ3PcoLYOVP1wqfRPb5AJgULYiAXASju2J0
+        provider:
+          okta:
+            issuer-uri: https://dev-wgukswd3g0sjbf77.us.auth0.com/
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      external:
+        event-consumer-buffer-size: 10
+        failure-rate-threshold: 50
+        ring-buffer-size-in-half-open-state: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+
+server:
+  port: 8082
