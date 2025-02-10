@@ -24,5 +24,12 @@ spring:
   config:
     import: configserver:http://localhost:8888
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/ecom
+          jwk-set-uri: http://localhost:8080/realms/ecom/protocol/openid-connect/certs
+
 server:
   port: 8081

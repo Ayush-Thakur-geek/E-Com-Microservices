@@ -6,8 +6,9 @@ import lombok.Data;
 @Data
 @Builder
 public class ProductResponse {
+    private long id;
     private String name;
-    private Long price;
-    private Long quantity;
+    private long price;
+    private long quantity;
     private String description;
 }

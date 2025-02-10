@@ -6,14 +6,14 @@ spring:
     enabled: true
 
   datasource:
-    url: jdbc:mariadb://${DBHost:localhost}:3306/orderdb
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:h2:mem:order
+    driver-class-name: org.h2.Driver
     username: root
     password: Thakur@7
 
   jpa:
     hibernate:
-      dialect: org.hibernate.dialect.MariaDBDialect
+      dialect: org.hibernate.dialect.H2Dialect
       ddl-auto: update
     generate-ddl: true
     show-sql: true
@@ -23,7 +23,7 @@ spring:
 
   cloud:
     config:
-      import: configserver:http://localhost:8888
+      import: optional:configserver:http://localhost:8888
 
 
 # security:
