@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: ORDER-SERVICE
+
+  jmx:
+    enabled: true
+
+  datasource:
+    url: jdbc:h2:mem:order
+    driver-class-name: org.h2.Driver
+    username: root
+    password: Thakur@7
+
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.H2Dialect
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  cloud:
+    config:
+      import: optional:configserver:http://localhost:8888
+
+
+# security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           issuer-uri: http://localhost:8080/realms/ecom
+#           jwk-set-uri: http://localhost:8080/realms/ecom/protocol/openid-connect/certs
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      external:
+        event-consumer-buffer-size: 10
+        failure-rate-threshold: 50
+        ring-buffer-size-in-half-open-state: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+
+server:
+  port: 8082
